@@ -1,0 +1,206 @@
+import pandas as pd
+
+# Function to handle NaN values by replacing them with "null" only in the Player column
+def handle_nan_values(df):
+    df['Player'] = df['Player'].fillna('null')
+    return df
+
+# Load the dataset
+df = pd.read_csv('/Users/anokhpalakurthi/Downloads/Tipped_Off_15_64_seed_H2Hs_6.9.csv')
+
+# Specify the 64 players of interest
+top_64_seeds = [
+    'Zain', 'Cody Schwab', 'aMSa', 'Mang0', 'Hungrybox', 'Jmook', 'moky', 'Plup',
+    'Soonsay', 'Wizzrobe', 'Spark', 'Joshman', 'Aklo', 'SDJ', 'Salt', 'Krudo',
+    'Axe', 'KoDoRiN', 'Chem', 'Ossify', 'ckyulmiqnudaetr', 'Wally', 'Lucky', 'Junebug', 
+    'S2J', 'bobby big ballz', 'mvlvchi', '2saint', 'Zamu', 'Colbol', 'Akir', 'Panda',
+    'n0ne', 'KJH', 'Drephen', 'CPU0', 'Wevans', 'Fro116', 'MOF', 'Preeminent',
+    'essy', 'Khryke', 'Zanya', 'max', 'Lowercase hero', 'Inky', 'Gahtzu', 'Unsure',
+    'Zasa', 'Komodo', 'Maelstrom', 'Balloon Day', 'Dawson', 'Beezy', 'mayb', 'Chango',
+    'Paladin', 'salami', 'SDeems', 'Louis', 'Egg$', 'billybopeep', 'Kalvar', 'Panko'
+]
+
+# Define player characters
+player_characters = {
+    'Zain': 'Marth', 'Cody Schwab': 'Fox', 'aMSa': 'Yoshi', 'Mang0': 'Fox',  
+    'Hungrybox': 'Jigglypuff', 'Jmook': 'Sheik', 'moky': 'Fox', 'Plup': 'Sheik', 
+    'Soonsay': 'Fox', 'Wizzrobe': 'Captain Falcon', 'Spark': 'Sheik', 'Joshman': 'Fox', 
+    'Aklo': 'Fox', 'SDJ': 'Jigglypuff', 'Salt': 'Captain Falcon', 'Krudo': 'Sheik',
+    'Axe': 'Pikachu', 'KoDoRiN': 'Marth', 'Chem': 'Fox', 'Ossify': 'Marth',
+    'ckyulmiqnudaetr': 'Donkey Kong', 'Wally': 'Peach', 'Lucky': 'Fox', 'Junebug': 'Donkey Kong',
+    'S2J': 'Captain Falcon', 'bobby big ballz': 'Falco', 'mvlvchi': 'Peach', '2saint': 'Jigglypuff', 
+    'Zamu': 'Fox', 'Colbol': 'Fox', 'Akir': 'Donkey Kong', 'Panda': 'Fox',
+    'n0ne': 'Captain Falcon', 'KJH': 'Fox', 'Drephen': 'Sheik', 'CPU0': 'Jigglypuff',
+    'Wevans': 'Samus', 'Fro116': 'Marth', 'MOF': 'Ice Climbers', 'Preeminent': 'Fox',
+    'essy': 'Fox', 'Khryke': 'Marth', 'Zanya': 'Sheik', 'max': 'Sheik',
+    'Lowercase hero': 'Fox', 'Inky': 'Sheik', 'Gahtzu': 'Captain Falcon', 'Unsure': 'Fox',
+    'Zasa': 'Jigglypuff', 'Komodo': 'Jigglypuff', 'Maelstrom': 'Fox', 'Balloon Day': 'Fox',
+    'Dawson': 'Jigglypuff', 'Beezy': 'Marth', 'mayb': 'Peach', 'Chango': 'Jigglypuff',
+    'Paladin': 'Fox', 'salami': 'Fox', 'SDeems': 'Sheik', 'Louis': 'Falco',
+    'Egg$': 'Yoshi', 'billybopeep': 'Fox', 'Kalvar': 'Marth', 'Panko': 'Jigglypuff'
+}
+
+# Define matchup probabilities
+characters = ['Fox', 'Falco', 'Marth', 'Sheik', 
+              'Jigglypuff', 'Captain Falcon', 'Peach', 'Yoshi', 
+              'Ice Climbers', 'Pikachu', 'Samus', 'Donkey Kong']
+
+matchup_values = [
+    [0.5, 0.5, 0.5, 0.6, 0.6, 0.6, 0.6, 0.7, 0.6, 0.6, 0.6, 0.6], # Fox
+    [0.5, 0.5, 0.4, 0.5, 0.5, 0.6, 0.5, 0.6, 0.6, 0.6, 0.6, 0.6], # Falco
+    [0.5, 0.6, 0.5, 0.4, 0.6, 0.5, 0.6, 0.5, 0.6, 0.5, 0.6, 0.6], # Marth
+    [0.4, 0.5, 0.6, 0.5, 0.4, 0.6, 0.6, 0.7, 0.4, 0.7, 0.7, 0.7], # Sheik
+    [0.4, 0.5, 0.4, 0.6, 0.5, 0.5, 0.7, 0.6, 0.6, 0.7, 0.7, 0.7], # Jigglypuff
+    [0.4, 0.4, 0.5, 0.4, 0.5, 0.5, 0.6, 0.6, 0.6, 0.6, 0.7, 0.7], # Captain Falcon
+    [0.4, 0.5, 0.4, 0.4, 0.3, 0.4, 0.5, 0.6, 0.7, 0.7, 0.6, 0.7], # Peach
+    [0.3, 0.4, 0.5, 0.3, 0.4, 0.4, 0.4, 0.5, 0.5, 0.6, 0.6, 0.6], # Yoshi
+    [0.4, 0.4, 0.4, 0.6, 0.4, 0.4, 0.3, 0.3, 0.5, 0.7, 0.5, 0.7], # Ice Climbers
+    [0.4, 0.4, 0.5, 0.3, 0.3, 0.4, 0.3, 0.4, 0.3, 0.5, 0.5, 0.6], # Pikachu
+    [0.4, 0.4, 0.4, 0.3, 0.4, 0.3, 0.4, 0.4, 0.5, 0.5, 0.5, 0.6], # Samus
+    [0.4, 0.4, 0.4, 0.3, 0.3, 0.3, 0.3, 0.4, 0.3, 0.4, 0.4, 0.5] # Donkey Kong
+]
+
+expected_matchup_probabilities = {char: dict(zip(characters, values)) for char, values in zip(characters, matchup_values)}
+
+# Helper function to parse the Wins/Losses columns
+def parse_opponents(opponent_str):
+    if pd.isna(opponent_str):
+        return {}
+    opponents = opponent_str.split('\n')
+    parsed_opponents = {}
+    for opp in opponents:
+        name, count = opp.rsplit('(', 1)
+        name = name.strip()
+        count = int(count.rstrip(')'))
+        parsed_opponents[name] = count
+    return parsed_opponents
+
+# Create the head-to-head data structure
+h2h_data = {}
+for _, row in df.iterrows():
+    player = row['Player']
+    wins = parse_opponents(row['Wins'])
+    losses = parse_opponents(row['Losses'])
+    
+    if player not in h2h_data:
+        h2h_data[player] = {'Wins': {}, 'Losses': {}}
+    
+    for opponent, count in wins.items():
+        h2h_data[player]['Wins'][opponent] = count
+    
+    for opponent, count in losses.items():
+        h2h_data[player]['Losses'][opponent] = count
+
+# Function to calculate the head-to-head win probability
+def head_to_head_win_prob(player, opponent):
+    """
+    Calculate the head-to-head win probability based on historical match data.
+    
+    Parameters:
+    player (str): The player's name.
+    opponent (str): The opponent's name.
+    
+    Returns:
+    float: The win probability for the player against the opponent.
+    """
+    if player not in h2h_data or opponent not in h2h_data[player]['Wins']:
+        return 0.5  # No head-to-head data available
+    
+    wins = h2h_data[player]['Wins'].get(opponent, 0)
+    losses = h2h_data[player]['Losses'].get(opponent, 0)
+    total_matches = wins + losses
+    return wins / total_matches if total_matches > 0 else 0.5
+
+# Initialize Elo ratings for each group
+elos = {
+    'Zain': 2500, 'Cody Schwab': 2500,
+    'aMSa': 2300, 'Mang0': 2300, 'Hungrybox': 2300, 'Jmook': 2300, 'moky': 2300, 'Plup': 2300, 'Soonsay': 2300, 'Wizzrobe': 2300,
+    'Spark': 2100, 'Joshman': 2100, 'Aklo': 2100, 'SDJ': 2100, 'Salt': 2100, 'Krudo': 2100, 'Axe': 2100, 'KoDoRiN': 2100, 'Chem': 2100, 'Ossify': 2100,
+    'ckyulmiqnudaetr': 2100, 'Wally': 2100, 'Lucky': 2100, 'Junebug': 2100, 'S2J': 2100, 'bobby big ballz': 2100, 'mvlvchi': 2100, '2saint': 2100, 'Zamu': 2100, 'Colbol': 2100,
+    'Akir': 2100, 'Panda': 2100, 'n0ne': 1900, 'KJH': 1900, 'Drephen': 1900, 'CPU0': 1900, 'Wevans': 1900, 'Fro116': 1900, 'MOF': 1900, 'Preeminent': 1900,
+    'essy': 1900, 'Khryke': 1900, 'Zanya': 1900, 'max': 1900, 'Lowercase hero': 1900, 'Inky': 1900, 'Gahtzu': 1900, 'Unsure': 1900,
+    'Zasa': 1900, 'Komodo': 1900, 'Maelstrom': 1900, 'Balloon Day': 1900, 'Dawson': 1900, 'Beezy': 1900, 'mayb': 1700, 'Chango': 1700, 'Paladin': 1700, 'salami': 1700,
+    'SDeems': 1700, 'Louis': 1700, 'Egg$': 1700, 'billybopeep': 1700, 'Kalvar': 1500, 'Panko': 1500
+}
+
+# Adjust Elo ratings based on match history
+def calculate_adjusted_elo(h2h_data, elos, k=32):
+    for player in h2h_data:
+        wins = h2h_data[player]['Wins']
+        losses = h2h_data[player]['Losses']
+        
+        for opponent, win_count in wins.items():
+            for _ in range(win_count):
+                if opponent in elos:
+                    expected_winner = 1 / (1 + 10 ** ((elos[opponent] - elos[player]) / 400))
+                    elos[player] += k * (1 - expected_winner)
+                    elos[opponent] += k * (0 - (1 - expected_winner))
+
+        for opponent, loss_count in losses.items():
+            for _ in range(loss_count):
+                if opponent in elos:
+                    expected_winner = 1 / (1 + 10 ** ((elos[player] - elos[opponent]) / 400))
+                    elos[opponent] += k * (1 - expected_winner)
+                    elos[player] += k * (0 - (1 - expected_winner))
+    
+    return elos
+
+# Sort Elo ratings from highest to lowest
+sorted_elos = sorted(elos.items(), key=lambda item: item[1], reverse=True)
+
+# Convert sorted list back to a dictionary (if needed)
+sorted_elos_dict = dict(sorted_elos)
+
+# Function to calculate combined win probability
+def combined_win_prob(player, opponent):
+
+    # Check for Elo ratings
+    elo1 = elos.get(player, 1500)
+    elo2 = elos.get(opponent, 1500)
+    elo_prob = 1 / (1 + 10 ** ((elo2 - elo1) / 400))
+    
+    # Calculate head-to-head probability
+    h2h_prob = head_to_head_win_prob(player, opponent)
+    
+    # Calculate matchup probability
+    char1 = player_characters.get(player, 'Fox')  # Default to 'Fox' if not found
+    char2 = player_characters.get(opponent, 'Fox')  # Default to 'Fox' if not found
+    matchup_prob = expected_matchup_probabilities.get(char1, {}).get(char2, 0.5)  # Default to 0.5 if not found
+    
+    # Combine probabilities (weighted average)
+    combined_prob_player = (elo_prob * 0.8) + (h2h_prob * 0.15) + (matchup_prob * 0.05)
+    combined_prob_opponent = 1 - combined_prob_player
+    return combined_prob_player
+
+# Ensure reciprocal win probabilities sum to 1.0
+def ensure_reciprocal_probabilities(matrix, top_64_seeds):
+    for player in top_64_seeds:
+        for opponent in top_64_seeds:
+            if player != opponent:
+                win_prob_player = matrix.loc[player, opponent]
+                matrix.loc[opponent, player] = 1 - win_prob_player
+    return matrix
+
+# Create and populate the win probability matrix
+win_prob_matrix = pd.DataFrame(index=top_64_seeds, columns=top_64_seeds)
+
+# Populate the DataFrame with win probabilities
+for player in top_64_seeds:
+    for opponent in top_64_seeds:
+        if player != opponent:
+            win_prob_matrix.loc[player, opponent] = combined_win_prob(player, opponent)
+        else:
+            win_prob_matrix.loc[player, opponent] = None  # or np.nan for diagonal
+
+# Ensure reciprocal probabilities sum to 1.0
+win_prob_matrix = ensure_reciprocal_probabilities(win_prob_matrix, top_64_seeds)
+
+# Convert to float and round the probabilities to two decimal places
+win_prob_matrix = win_prob_matrix.astype(float).round(2)
+
+# Save the DataFrame to a CSV file
+output_path = '/Users/anokhpalakurthi/Downloads/winprob_matrix_tipped_off_6.10.csv'
+win_prob_matrix.to_csv(output_path)
+
+print(f"Win probability matrix saved to {output_path}")
+print (win_prob_matrix)
