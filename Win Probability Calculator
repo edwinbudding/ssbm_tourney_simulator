@@ -6,7 +6,7 @@ def handle_nan_values(df):
     return df
 
 # Load the dataset
-df = pd.read_csv('/Users/anokhpalakurthi/Downloads/Tipped_Off_15_64_seed_H2Hs_6.9.csv')
+df = pd.read_csv('Tipped_Off_15_64_seed_H2Hs_6.9.csv') # privated 
 
 # Specify the 64 players of interest
 top_64_seeds = [
@@ -199,7 +199,7 @@ win_prob_matrix = ensure_reciprocal_probabilities(win_prob_matrix, top_64_seeds)
 win_prob_matrix = win_prob_matrix.astype(float).round(2)
 
 # Save the DataFrame to a CSV file
-output_path = '/Users/anokhpalakurthi/Downloads/winprob_matrix_tipped_off_6.10.csv'
+output_path = 'winprob_matrix_tipped_off_6.10.csv' # privated
 win_prob_matrix.to_csv(output_path)
 
 print(f"Win probability matrix saved to {output_path}")
