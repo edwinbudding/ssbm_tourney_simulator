@@ -3,7 +3,7 @@ import random
 from io import StringIO
 
 # Load the win probability matrix
-win_prob_matrix = pd.read_csv('/Users/anokhpalakurthi/Downloads/winprob_matrix_tipped_off_6.10.csv', index_col=0)
+win_prob_matrix = pd.read_csv('winprob_matrix_tipped_off_6.10.csv', index_col=0) ## changed file path; ask me for csv if you need it
 
 # List of seeded players
 seeded_players = [
